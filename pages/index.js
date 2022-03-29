@@ -1,10 +1,16 @@
-import styled from 'styled-components'
-
-const Title = styled.h1`
-  font-size: 50px;
-  color: ${({ theme }) => theme.colors.primary};
-`
+import styled from "styled-components"
+import Categories from "../components/Categories"
+import Newsletter from "../components/Newsletter"
+import Products from "../components/Products"
+import Slider from "../components/Slider"
 
 export default function Home() {
-  return <Title>My page</Title>
+  return (
+    <>
+      <Slider />
+      <Categories />
+      <Products />
+      <Newsletter />
+    </>
+  )
 }
