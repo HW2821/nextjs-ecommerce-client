@@ -2,6 +2,7 @@ import FavoriteBorderOutlined from "@mui/icons-material/FavoriteBorderOutlined"
 import SearchOutlined from "@mui/icons-material/SearchOutlined"
 import ShoppingCartOutlined from "@mui/icons-material/ShoppingCartOutlined"
 import Image from "next/image"
+import { useRouter } from "next/router"
 import styled from "styled-components"
 
 const Container = styled.div`
@@ -61,7 +62,8 @@ const Icon = styled.div`
   }
 `
 
-export default function ProductItem({ img }) {
+export default function ProductItem({ img, _id }) {
+  const router = useRouter()
   return (
     <Container>
       <ImgContainer>
@@ -71,7 +73,11 @@ export default function ProductItem({ img }) {
         <Icon>
           <ShoppingCartOutlined />
         </Icon>
-        <Icon>
+        <Icon
+          onClick={() => {
+            router.push(`/product/${_id}`)
+          }}
+        >
           <SearchOutlined />
         </Icon>
         <Icon>

@@ -1,7 +1,11 @@
 import Image from "next/image"
+import { useRouter } from "next/router"
+import { useEffect } from "react"
+import { useSelector } from "react-redux"
 import styled from "styled-components"
 import { Amount } from "../components/Misc"
 import { mobile } from "../styled/responsive"
+import { userRequest } from "../utils/requestMethod"
 
 const Container = styled.div`
   padding: 20px;
@@ -94,6 +98,7 @@ const ProductName = styled.span`
 const ProductId = styled.span``
 
 const ProductColor = styled.div`
+  display: inline-block;
   width: 20px;
   height: 20px;
   border-radius: 50%;
@@ -171,97 +176,101 @@ const Button = styled.button`
   })}
 `
 
-export default function cart() {
-  return (
-    <Container>
-      <Title>我的购物车</Title>
-      <Top>
-        <TopButton>继续购物</TopButton>
-        <TopTextContainer>
-          <TopText>购物车（2）</TopText>
-          <TopText>愿望清单（0）</TopText>
-        </TopTextContainer>
-        <TopButton filled>前往结算</TopButton>
-      </Top>
-      <Bottom>
-        <Info>
-          <Product>
-            <ProductDetail>
-              <ImgContainer>
-                <Image
-                  src={"https://i.ibb.co/840BLmt/EAB14-A09-2-EE3-4829-8874-2-DAC3-F51-BC06.jpg"}
-                  layout="fill"
-                  objectFit="cover"
-                />
-              </ImgContainer>
-              <Details>
-                <ProductName>
-                  <b>产品：</b>防晒衣女装棉混纺防紫外线拉链连帽开衫
-                </ProductName>
-                <ProductId>
-                  <b>ID： </b>9834654398
-                </ProductId>
-                <ProductColor color="grey" />
-                <ProductSize>
-                  <b>尺码：</b>M
-                </ProductSize>
-              </Details>
-            </ProductDetail>
-            <PriceDetail>
-              <Amount />
-              <ProductPrice>¥30</ProductPrice>
-            </PriceDetail>
-          </Product>
-          <Hr />
-          <Product>
-            <ProductDetail>
-              <ImgContainer>
-                <Image
-                  src={"https://i.ibb.co/840BLmt/EAB14-A09-2-EE3-4829-8874-2-DAC3-F51-BC06.jpg"}
-                  layout="fill"
-                  objectFit="cover"
-                />
-              </ImgContainer>
-              <Details>
-                <ProductName>
-                  <b>产品：</b>防晒衣女装棉混纺防紫外线拉链连帽开衫
-                </ProductName>
-                <ProductId>
-                  <b>ID： </b>9834654398
-                </ProductId>
-                <ProductColor color="grey" />
-                <ProductSize>
-                  <b>尺码：</b>M
-                </ProductSize>
-              </Details>
-            </ProductDetail>
-            <PriceDetail>
-              <Amount />
-              <ProductPrice>¥30</ProductPrice>
-            </PriceDetail>
-          </Product>
-        </Info>
-        <Summary>
-          <SummaryTitle>购物车明细</SummaryTitle>
-          <SummaryItem>
-            <SummaryItemText>产品合计</SummaryItemText>
-            <SummaryItemPrice>¥60</SummaryItemPrice>
-          </SummaryItem>
-          <SummaryItem>
-            <SummaryItemText>预估运费</SummaryItemText>
-            <SummaryItemPrice>¥5</SummaryItemPrice>
-          </SummaryItem>
-          <SummaryItem>
-            <SummaryItemText>运费减免</SummaryItemText>
-            <SummaryItemPrice>¥ -2</SummaryItemPrice>
-          </SummaryItem>
-          <SummaryItem total>
-            <SummaryItemText>订单合计</SummaryItemText>
-            <SummaryItemPrice>¥ 63</SummaryItemPrice>
-          </SummaryItem>
-          <Button>结算</Button>
-        </Summary>
-      </Bottom>
-    </Container>
-  )
+const Blank = styled.div`
+  height: 100vh;
+`
+
+export default function () {
+  const cartRedux = useSelector((s) => s.cart)
+  const userRedux = useSelector((s) => s.user)
+  const deliverCost = cartRedux.totalPrice ? 5 : 0
+  const discount = cartRedux.totalPrice > 50 ? 5 : 0
+  const router = useRouter()
+  const handlePayment = async () => {
+    try {
+      const res = await userRequest.get("/payment")
+      if (res.data === "支付成功") router.push("/success")
+    } catch (error) {
+      console.log(error.message)
+      alert("支付失败")
+    }
+  }
+
+  useEffect(() => {
+    if (!userRedux.currentUser) router.push("/login")
+  }, [])
+
+  if (!userRedux.currentUser) return <Blank />
+  else
+    return (
+      <Container>
+        <Title>我的购物车</Title>
+        <Top>
+          <TopButton>继续购物</TopButton>
+          <TopTextContainer>
+            <TopText>购物车（2）</TopText>
+            <TopText>愿望清单（0）</TopText>
+          </TopTextContainer>
+          <TopButton filled>前往结算</TopButton>
+        </Top>
+        <Bottom>
+          <Info>
+            {cartRedux.cartItems.map((p, i) => (
+              <div key={i}>
+                {i === 0 ? null : <Hr />}
+                <Product>
+                  <ProductDetail>
+                    <ImgContainer>
+                      <Image src={p.img} layout="fill" objectFit="cover" />
+                    </ImgContainer>
+                    <Details>
+                      <ProductName>
+                        <b>产品：</b>
+                        {p.title}
+                      </ProductName>
+                      <ProductId>
+                        <b>ID： </b>
+                        {p._id}
+                      </ProductId>
+                      <ProductId>
+                        <b>颜色： </b>
+                        <ProductColor color={p.color} />
+                      </ProductId>
+                      <ProductSize>
+                        <b>尺码：</b>
+                        {p.size}
+                      </ProductSize>
+                    </Details>
+                  </ProductDetail>
+                  <PriceDetail>
+                    <Amount amount={p.amount} />
+                    <ProductPrice>¥{p.price * p.amount}</ProductPrice>
+                  </PriceDetail>
+                </Product>
+              </div>
+            ))}
+          </Info>
+          <Summary>
+            <SummaryTitle>购物车明细</SummaryTitle>
+            <SummaryItem>
+              <SummaryItemText>产品合计</SummaryItemText>
+              <SummaryItemPrice>¥{cartRedux.totalPrice}</SummaryItemPrice>
+            </SummaryItem>
+            <SummaryItem>
+              <SummaryItemText>预估运费</SummaryItemText>
+              <SummaryItemPrice>¥ {deliverCost}</SummaryItemPrice>
+            </SummaryItem>
+            <SummaryItem>
+              <SummaryItemText>运费减免</SummaryItemText>
+              <SummaryItemPrice>¥ {discount}</SummaryItemPrice>
+            </SummaryItem>
+            <SummaryItem total>
+              <SummaryItemText>订单合计</SummaryItemText>
+              <SummaryItemPrice>¥ {cartRedux.totalPrice + deliverCost - discount}</SummaryItemPrice>
+            </SummaryItem>
+            <Button onClick={handlePayment}>结算</Button>
+          </Summary>
+        </Bottom>
+      </Container>
+    )
 }

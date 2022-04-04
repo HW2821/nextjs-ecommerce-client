@@ -20,9 +20,24 @@ export const slideData = [
 ]
 
 export const categoryData = [
-  { id: 0, img: "https://i.ibb.co/2NJJmkF/DE56-A3-C9-D433-4-F03-B049-517-D1-C06158-D.jpg", title: "基本款" },
-  { id: 1, img: "https://i.ibb.co/Px598N9/8-BC77089-9036-4-B20-A8-E8-3-CBD772-F819-E.jpg", title: "户外美学" },
-  { id: 2, img: "https://i.ibb.co/mG281gG/643588-E5-56-A7-477-F-A46-F-ED46-AFB64-AEB.jpg", title: "艺术风" },
+  {
+    id: 0,
+    img: "https://i.ibb.co/2NJJmkF/DE56-A3-C9-D433-4-F03-B049-517-D1-C06158-D.jpg",
+    title: "基本款",
+    category: "basic",
+  },
+  {
+    id: 1,
+    img: "https://i.ibb.co/Px598N9/8-BC77089-9036-4-B20-A8-E8-3-CBD772-F819-E.jpg",
+    title: "户外美学,",
+    category: "outdoor",
+  },
+  {
+    id: 2,
+    img: "https://i.ibb.co/mG281gG/643588-E5-56-A7-477-F-A46-F-ED46-AFB64-AEB.jpg",
+    title: "艺术风",
+    category: "artistic",
+  },
 ]
 
 export const popularProducts = [
@@ -33,5 +48,5 @@ export const popularProducts = [
   { id: 5, img: "https://i.ibb.co/NpQdPc5/A912711-D-539-B-4-E3-C-874-F-9-D0943553-EAC.jpg" },
   { id: 6, img: "https://i.ibb.co/ZN9gjYZ/AF774267-743-F-48-E4-9-F6-F-82-C57-AAEE951.jpg" },
   { id: 7, img: "https://i.ibb.co/BgRyvX1/B0693553-CDDD-4-B7-A-8835-4-BE365-F8-BA65.jpg" },
-  { id: 8, img: "https://i.ibb.co/Tm4JZGf/D1-F8-B546-E823-442-A-9159-36-E338371489.jpg]" },
+  { id: 8, img: "https://i.ibb.co/Tm4JZGf/D1-F8-B546-E823-442-A-9159-36-E338371489.jpg" },
 ]

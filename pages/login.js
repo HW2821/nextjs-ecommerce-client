@@ -1,5 +1,9 @@
 import Link from "next/link"
+import { useRouter } from "next/router"
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import styled from "styled-components"
+import { login } from "../redux/apiCalls"
 import { mobile } from "../styled/responsive"
 
 const Container = styled.div`
@@ -56,20 +60,57 @@ const Button = styled.button`
   font-weight: 700;
   cursor: pointer;
   margin-bottom: 10px;
+
+  &:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+`
+
+const Error = styled.span`
+  color: red;
 `
 
 export default function register() {
+  const [username, setUsername] = useState("")
+  const [password, setPassword] = useState("")
+  const userRedux = useSelector((s) => s.user)
+  const router = useRouter()
+  const { isFetching, error } = useSelector((s) => s.user)
+  const dispatch = useDispatch()
+
+  const handleLogin = (e) => {
+    e.preventDefault(dispatch)
+    console.log(username, password)
+    login(dispatch, { username, password })
+  }
+  if (userRedux.currentUser) router.push("/")
+
   return (
     <Container>
       <Wrapper>
         <Title>登录账号</Title>
         <Form>
-          <Input placeholder="输入邮箱或用户名" />
-          <Input placeholder="密码" />
-          <Button>登陆</Button>
+          <Input
+            onChange={(e) => {
+              setUsername(e.target.value)
+            }}
+            placeholder="输入邮箱或用户名"
+          />
+          <Input
+            onChange={(e) => {
+              setPassword(e.target.value)
+            }}
+            type="password"
+            placeholder="密码"
+          />
+          <Button disabled={isFetching} onClick={handleLogin}>
+            登陆
+          </Button>
           <span>
             无账号？<Link href={"/register"}>点此注册</Link>
           </span>
+          {error ? <Error>{error}</Error> : null}
         </Form>
       </Wrapper>
     </Container>

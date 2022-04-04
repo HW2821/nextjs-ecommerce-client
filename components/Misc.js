@@ -19,12 +19,22 @@ const Count = styled.span`
   margin: 0 5px;
 `
 
-export function Amount() {
+export function Amount({ amount, setAmount }) {
   return (
     <AmountContainer>
-      <Remove />
-      <Count>1</Count>
-      <Add />
+      <Remove
+        onClick={() => {
+          amount > 1 && setAmount(amount - 1)
+        }}
+        style={{ cursor: "pointer" }}
+      />
+      <Count>{amount}</Count>
+      <Add
+        onClick={() => {
+          setAmount(amount + 1)
+        }}
+        style={{ cursor: "pointer" }}
+      />
     </AmountContainer>
   )
 }

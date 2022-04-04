@@ -46,10 +46,11 @@ const Card = styled.div`
   background-color: white;
 `
 
-export default function CategoryItem({ img, title }) {
+export default function CategoryItem({ img, title, category }) {
   const router = useRouter()
+
   return (
-    <Container onClick={() => router.push("/productlist")}>
+    <Container onClick={() => router.push(`/productlist/${category}`)}>
       <Image src={img} layout="fill" objectFit="cover" />
       <Info>
         <Title>{title}</Title>

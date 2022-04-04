@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect, useState } from "react"
 import styled from "styled-components"
 import SearchIcon from "@mui/icons-material/Search"
 import Badge from "@mui/material/Badge"
@@ -6,6 +6,7 @@ import ShoppingCartOutlined from "@mui/icons-material/ShoppingCartOutlined"
 import { mobile } from "../styled/responsive"
 import { useRouter } from "next/router"
 import Link from "next/link"
+import { useSelector } from "react-redux"
 
 const Container = styled.div`
   height: 60px;
@@ -79,7 +80,16 @@ const MenuItem = styled.div`
 `
 
 export default function Navbar() {
+  const [client, setClient] = useState(false)
+  const cartRedux = useSelector((s) => s.cart)
+  const quantity = cartRedux.quantity
   const router = useRouter()
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setClient(true)
+    }
+  }, [])
 
   return (
     <Container>
@@ -101,8 +111,8 @@ export default function Navbar() {
           <MenuItem>
             <Link href={"/login"}>登陆</Link>
           </MenuItem>
-          <MenuItem>
-            <Badge badgeContent={4} color="primary">
+          <MenuItem onClick={() => router.push("/cart")}>
+            <Badge badgeContent={client ? quantity : 0} color="primary">
               <ShoppingCartOutlined />
             </Badge>
           </MenuItem>
