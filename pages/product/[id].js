@@ -112,7 +112,7 @@ const AddContainer = styled.div`
 
 const Button = styled.button`
   all: unset;
-  padding: 10px 15px;
+  padding: 10px 25px;
   border: 2px solid teal;
   cursor: pointer;
   color: teal;
@@ -133,7 +133,8 @@ const Warning = styled.span`
 
 const Icon = styled.div`
   display: none;
-  overflow: hidden;
+  margin-left: 10px;
+
   display: ${(p) => p.loading && "block"};
 `
 
