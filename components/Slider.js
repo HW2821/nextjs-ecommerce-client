@@ -124,7 +124,7 @@ export default function Slider() {
     return () => {
       clearInterval(timer)
     }
-  })
+  }, [])
 
   return (
     <Container>
@@ -138,7 +138,7 @@ export default function Slider() {
       <Wrapper index={index}>
         {slideData.map((d) => (
           <Slide key={d.id}>
-            <Image priority src={d.img} layout="fill" objectFit="cover" />
+            <Image draggable={false} priority src={d.img} layout="fill" objectFit="cover" />
             <InfoContainer>
               <Title>{d.title}</Title>
               <Desc>{d.desc}</Desc>
