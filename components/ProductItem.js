@@ -64,8 +64,12 @@ const Icon = styled.div`
 
 export default function ProductItem({ img, _id }) {
   const router = useRouter()
+
+  const toProductDetail = () => {
+    router.push(`/product/${_id}`)
+  }
   return (
-    <Container>
+    <Container onClick={toProductDetail}>
       <ImgContainer>
         <Image src={img} layout="fill" objectFit="cover" />
       </ImgContainer>
@@ -73,11 +77,7 @@ export default function ProductItem({ img, _id }) {
         <Icon>
           <ShoppingCartOutlined />
         </Icon>
-        <Icon
-          onClick={() => {
-            router.push(`/product/${_id}`)
-          }}
-        >
+        <Icon onClick={toProductDetail}>
           <SearchOutlined />
         </Icon>
         <Icon>

@@ -2,11 +2,8 @@ import { createGlobalStyle, ThemeProvider } from "styled-components"
 import Layout from "../components/Layout"
 import ProgressBar from "@badrap/bar-of-progress"
 import Router, { useRouter } from "next/router"
-import { Provider } from "react-redux"
+import { Provider, useDispatch } from "react-redux"
 import store from "../redux/store"
-import { useEffect } from "react"
-import { PersistGate } from "redux-persist/integration/react"
-import persistor from "../redux/store"
 
 const progress = new ProgressBar({
   size: 3,

@@ -6,11 +6,20 @@ import ShoppingCartOutlined from "@mui/icons-material/ShoppingCartOutlined"
 import { mobile } from "../styled/responsive"
 import { useRouter } from "next/router"
 import Link from "next/link"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
+import { loggout } from "../redux/userSlice"
+import { clearCart, resetCart } from "../redux/cartSlice"
+import HomeOutlined from "@mui/icons-material/HomeOutlined"
 
 const Container = styled.div`
   height: 60px;
   ${mobile({ height: "50px" })}
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: white;
+
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 `
 
 const Wrapper = styled.div`
@@ -79,10 +88,50 @@ const MenuItem = styled.div`
   }
 `
 
+const DropDown = styled.div`
+  position: relative;
+  margin-right: 20px;
+  height: 25px;
+`
+
+const UserName = styled.div`
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border: 1px solid black;
+
+  &:hover {
+    background-color: #e4e4e4;
+  }
+`
+
+const LogOut = styled.div`
+  position: absolute;
+  display: none;
+  display: ${(p) => p.clicked && "block"};
+  background-color: white;
+  text-align: center;
+  padding: 5px 10px;
+  border: 1px solid black;
+
+  white-space: nowrap;
+  cursor: pointer;
+  &:hover {
+    background-color: #e4e4e4;
+  }
+`
+
+const HomeIcon = styled.div`
+  margin-left: 10px;
+  cursor: pointer;
+`
+
 export default function Navbar() {
   const [client, setClient] = useState(false)
-  const cartRedux = useSelector((s) => s.cart)
-  const quantity = cartRedux.quantity
+  const [clicked, setClicked] = useState(false)
+  const quantity = useSelector((s) => s.cart.quantity)
+  const currentUser = useSelector((s) => s.user.currentUser)
+  const dispatch = useDispatch()
   const router = useRouter()
 
   useEffect(() => {
@@ -91,11 +140,54 @@ export default function Navbar() {
     }
   }, [])
 
+  if (client) {
+    window.onclick = (e) => {
+      if (!e.target.matches(".username") && clicked) setClicked(false)
+    }
+  }
+
+  const handleLogOut = () => {
+    dispatch(loggout())
+    dispatch(clearCart())
+  }
+
+  const userMenu = (
+    <DropDown>
+      <UserName
+        className="username"
+        onClick={() => {
+          setClicked(!clicked)
+        }}
+      >
+        {currentUser?.username}
+      </UserName>
+      <LogOut onClick={handleLogOut} clicked={clicked}>
+        退出
+      </LogOut>
+    </DropDown>
+  )
+  const defaultMenu = (
+    <>
+      <MenuItem>
+        <Link href={"/register"}>注册</Link>
+      </MenuItem>
+      <MenuItem>
+        <Link href={"/login"}>登陆</Link>
+      </MenuItem>
+    </>
+  )
+
   return (
     <Container>
       <Wrapper>
         <Left>
-          <Language>CN</Language>
+          <HomeIcon
+            onClick={() => {
+              router.push("/")
+            }}
+          >
+            <HomeOutlined />
+          </HomeIcon>
           <SearchContainer>
             <SearchInput placeholder="搜索" />
             <SearchIcon style={{ color: "grey", fontSize: "16px" }} />
@@ -105,12 +197,7 @@ export default function Navbar() {
           <Logo onClick={() => router.push("/")}>HW's</Logo>
         </Center>
         <Right>
-          <MenuItem>
-            <Link href={"/register"}>注册</Link>
-          </MenuItem>
-          <MenuItem>
-            <Link href={"/login"}>登陆</Link>
-          </MenuItem>
+          {currentUser ? userMenu : defaultMenu}
           <MenuItem onClick={() => router.push("/cart")}>
             <Badge badgeContent={client ? quantity : 0} color="primary">
               <ShoppingCartOutlined />

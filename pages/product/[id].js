@@ -1,7 +1,9 @@
+import { CircularProgress } from "@mui/material"
+import { display } from "@mui/system"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import styled from "styled-components"
 import { Amount } from "../../components/Misc"
 import { addToCart } from "../../redux/cartSlice"
@@ -81,6 +83,8 @@ const FilterColor = styled.div`
   margin-left: 10px;
   border-radius: 50%;
   cursor: pointer;
+
+  border: ${(p) => p.select && "3px solid lightblue"};
 `
 
 const FilterSize = styled.select`
@@ -113,13 +117,24 @@ const Button = styled.button`
   cursor: pointer;
   color: teal;
   font-weight: 500;
-
+  user-select: none;
   transition: all 0.2s ease;
-
+  display: flex;
   &:hover {
     background-color: teal;
     color: white;
   }
+`
+
+const Warning = styled.span`
+  color: red;
+  display: fixed;
+`
+
+const Icon = styled.div`
+  display: none;
+  overflow: hidden;
+  display: ${(p) => p.loading && "block"};
 `
 
 export default function Product() {
@@ -127,6 +142,8 @@ export default function Product() {
   const [amount, setAmount] = useState(1)
   const [color, setColor] = useState("")
   const [size, setSize] = useState("")
+  const error = useSelector((s) => s.cart.error)
+  const loading = useSelector((s) => s.cart.loading)
   const { query, isReady } = useRouter()
   const dispatch = useDispatch()
 
@@ -153,8 +170,9 @@ export default function Product() {
   useEffect(async () => {
     if (!isReady) return
     const data = await getProduct()
-    console.log(data)
     setProduct(data)
+    setColor(data.color[0])
+    setSize(data.size[0])
   }, [isReady])
 
   return (
@@ -185,6 +203,7 @@ export default function Product() {
                   onClick={() => {
                     setColor(c)
                   }}
+                  select={c === color}
                   color={c}
                   key={"color_" + i}
                 />
@@ -203,7 +222,13 @@ export default function Product() {
           </FilterContainer>
           <AddContainer>
             <Amount amount={amount} setAmount={setAmount} />
-            <Button onClick={handleAddToCart}>加入购物车</Button>
+            <Button loading={loading} onClick={handleAddToCart}>
+              <span>加入购物车</span>
+              <Icon loading={loading}>
+                <CircularProgress size={20} color="inherit" />
+              </Icon>
+            </Button>
+            <Warning hidden={!error}>{error}</Warning>
           </AddContainer>
         </InfoContainer>
       </Wrapper>

@@ -1,14 +1,19 @@
-import { publicRequest } from "../utils/requestMethod"
-import { loginFail, loginStart, loginSuccess } from "./userSlice"
+import { publicRequest, userRequest } from "../utils/requestMethod"
 
-export const login = async (dispatch, loginInfo) => {
-  dispatch(loginStart())
-
+export const register = async (info) => {
   try {
-    const res = await publicRequest.post("/auth/login", loginInfo)
-    dispatch(loginSuccess(res.data))
+    const res = await publicRequest.post("/auth/register", info)
+    return res.data
   } catch (error) {
-    dispatch(loginFail(error.response.data))
-    console.log(error.response.data)
+    alert(error.response.data)
+  }
+}
+
+export const getCartItems = async (userid) => {
+  try {
+    const res = await userRequest.get("/carts/find/" + userid)
+    return res.data
+  } catch (error) {
+    return error.response.data
   }
 }

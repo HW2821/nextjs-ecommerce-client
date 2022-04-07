@@ -1,6 +1,7 @@
 import axios from "axios"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
+import { publicRequest } from "../utils/requestMethod"
 import ProductItem from "./ProductItem"
 
 const Container = styled.div`
@@ -17,19 +18,16 @@ export default function Products({ category, filter, sort = "new" }) {
   const getProductlist = async () => {
     let data
     try {
-      const res = await axios.get("http://localhost:5000/api/products", {
-        params: { category, sort },
-      })
+      const res = await publicRequest.get("/products", { params: { category, sort } })
       data = res.data
     } catch (error) {
-      console.log(error.message)
+      console.log(error)
     }
     return data || []
   }
 
   useEffect(async () => {
-    let listdata = await getProductlist()
-
+    const listdata = await getProductlist()
     setList(listdata)
     setFilteredList(listdata)
   }, [])

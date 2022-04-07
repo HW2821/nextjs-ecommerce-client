@@ -1,6 +1,9 @@
 import { Checkbox } from "@mui/material"
 import Link from "next/link"
+import { useRouter } from "next/router"
+import { useState } from "react"
 import styled from "styled-components"
+import { register } from "../redux/apiCalls"
 import { mobile } from "../styled/responsive"
 
 const Container = styled.div`
@@ -66,21 +69,80 @@ const Button = styled.button`
   margin-bottom: 10px;
 `
 
-export default function register() {
+const Warn = styled.span`
+  color: red;
+`
+
+export default function () {
+  const [username, setUsername] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirm, setConfirm] = useState("")
+  const [checkbox, setCheckbox] = useState(false)
+  const [warning, setWarning] = useState("")
+  const router = useRouter()
+
+  const handleClick = async (e) => {
+    setWarning("")
+    e.preventDefault()
+    if (!username) return setWarning("未输入用户名")
+    if (!email) return setWarning("未输入邮箱")
+    if (!email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/))
+      return setWarning("邮箱格式不正确")
+    if (!password) return setWarning("未输入密码")
+    if (!confirm) return setWarning("未确认密码")
+    if (password !== confirm) return setWarning("请输入相同密码")
+    if (!checkbox) return setWarning("未确认协议")
+    const data = await register({ username, email, password })
+    if (data._id) {
+      alert("注册成功,前往登录")
+      setTimeout(() => {
+        router.push("/login")
+      }, 2000)
+    }
+  }
+
   return (
     <Container>
       <Wrapper>
         <Title>注册账号</Title>
+        {warning ? <Warn>{warning}</Warn> : null}
         <Form>
-          <Input placeholder="用户名" />
-          <Input placeholder="邮箱" />
-          <Input placeholder="密码" />
-          <Input placeholder="确认密码" />
+          <Input
+            placeholder="用户名"
+            onChange={(e) => {
+              setUsername(e.target.value)
+            }}
+          />
+          <Input
+            placeholder="邮箱"
+            onChange={(e) => {
+              setEmail(e.target.value)
+            }}
+          />
+          <Input
+            placeholder="密码"
+            onChange={(e) => {
+              setPassword(e.target.value)
+            }}
+          />
+          <Input
+            placeholder="确认密码"
+            onChange={(e) => {
+              setConfirm(e.target.value)
+            }}
+          />
           <Aggrement>
-            <Checkbox disableRipple color="grey" />
+            <Checkbox
+              disableRipple
+              color="grey"
+              onChange={() => {
+                setCheckbox(!checkbox)
+              }}
+            />
             我已阅读并同意使用《用户协议》
           </Aggrement>
-          <Button>确认</Button>
+          <Button onClick={handleClick}>确认</Button>
           <span>
             已有账号？
             <Link href={"/login"}>点此登陆</Link>

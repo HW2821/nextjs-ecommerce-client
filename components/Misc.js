@@ -24,14 +24,14 @@ export function Amount({ amount, setAmount }) {
     <AmountContainer>
       <Remove
         onClick={() => {
-          amount > 1 && setAmount(amount - 1)
+          setAmount && amount > 1 && setAmount(amount - 1)
         }}
         style={{ cursor: "pointer" }}
       />
       <Count>{amount}</Count>
       <Add
         onClick={() => {
-          setAmount(amount + 1)
+          setAmount && setAmount(amount + 1)
         }}
         style={{ cursor: "pointer" }}
       />

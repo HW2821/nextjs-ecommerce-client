@@ -1,9 +1,12 @@
+import Add from "@mui/icons-material/Add"
+import Remove from "@mui/icons-material/Remove"
 import Image from "next/image"
 import { useRouter } from "next/router"
 import { useEffect } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import styled from "styled-components"
 import { Amount } from "../components/Misc"
+import { addToCart } from "../redux/cartSlice"
 import { mobile } from "../styled/responsive"
 import { userRequest } from "../utils/requestMethod"
 
@@ -70,6 +73,7 @@ const Product = styled.div`
   justify-content: space-between;
   ${mobile({
     flexDirection: "column",
+    marginRight: "10px",
   })}
 `
 
@@ -82,6 +86,9 @@ const ImgContainer = styled.div`
   position: relative;
   width: 200px;
   height: 200px;
+  ${mobile({
+    margin: "10px",
+  })}
 `
 
 const Details = styled.div`
@@ -89,13 +96,21 @@ const Details = styled.div`
   padding: 20px;
   flex-direction: column;
   justify-content: space-around;
+
+  ${mobile({
+    padding: "10px",
+    width: "50%",
+  })}
 `
 
 const ProductName = styled.span`
   white-space: normal;
 `
 
-const ProductId = styled.span``
+const ProductId = styled.span`
+  white-space: normal;
+  word-break: break-all;
+`
 
 const ProductColor = styled.div`
   display: inline-block;
@@ -140,6 +155,8 @@ const Summary = styled.div`
   border-radius: 10px;
   padding: 20px;
   height: 50vh;
+  position: sticky;
+  top: 80px;
 `
 
 const SummaryTitle = styled.h1`
@@ -177,7 +194,26 @@ const Button = styled.button`
 `
 
 const Blank = styled.div`
-  height: 100vh;
+  min-height: 100vh;
+`
+
+const Quantity = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const Num = styled.div`
+  font-size: large;
+  font-weight: 600;
+  width: 30px;
+  height: 30px;
+  margin: 10px;
+  border: 1px solid teal;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 20%;
 `
 
 export default function () {
@@ -186,10 +222,12 @@ export default function () {
   const deliverCost = cartRedux.totalPrice ? 5 : 0
   const discount = cartRedux.totalPrice > 50 ? 5 : 0
   const router = useRouter()
+  const dispatch = useDispatch()
+
   const handlePayment = async () => {
     try {
-      const res = await userRequest.get("/payment")
-      if (res.data === "支付成功") router.push("/success")
+      const res = await userRequest(userRedux.currentUser.accessToken).get("/payment/" + userRedux.currentUser._id)
+      if (res.data === "支付成功") router.push("/order")
     } catch (error) {
       console.log(error.message)
       alert("支付失败")
@@ -198,7 +236,18 @@ export default function () {
 
   useEffect(() => {
     if (!userRedux.currentUser) router.push("/login")
-  }, [])
+  }, [userRedux])
+
+  const handleAdd = (i) => {
+    const newItem = structuredClone(cartRedux.cartItems[i])
+    newItem.amount = 1
+    dispatch(addToCart(newItem))
+  }
+  const handleRemove = (i) => {
+    const newItem = structuredClone(cartRedux.cartItems[i])
+    newItem.amount = -1
+    dispatch(addToCart(newItem))
+  }
 
   if (!userRedux.currentUser) return <Blank />
   else
@@ -208,10 +257,10 @@ export default function () {
         <Top>
           <TopButton>继续购物</TopButton>
           <TopTextContainer>
-            <TopText>购物车（2）</TopText>
+            <TopText>购物车（{cartRedux.quantity}）</TopText>
             <TopText>愿望清单（0）</TopText>
           </TopTextContainer>
-          <TopButton filled>前往结算</TopButton>
+          <TopButton filled>前往订单</TopButton>
         </Top>
         <Bottom>
           <Info>
@@ -243,7 +292,11 @@ export default function () {
                     </Details>
                   </ProductDetail>
                   <PriceDetail>
-                    <Amount amount={p.amount} />
+                    <Quantity>
+                      <Remove sx={{ cursor: "pointer" }} onClick={() => handleRemove(i)} />
+                      <Num> {p.amount}</Num>
+                      <Add sx={{ cursor: "pointer" }} onClick={() => handleAdd(i)} />
+                    </Quantity>
                     <ProductPrice>¥{p.price * p.amount}</ProductPrice>
                   </PriceDetail>
                 </Product>

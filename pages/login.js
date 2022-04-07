@@ -3,7 +3,9 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import styled from "styled-components"
-import { login } from "../redux/apiCalls"
+import { fetchCartItems } from "../redux/cartSlice"
+import { login } from "../redux/userSlice"
+// import { login } from "../redux/apiCalls"
 import { mobile } from "../styled/responsive"
 
 const Container = styled.div`
@@ -71,33 +73,35 @@ const Error = styled.span`
   color: red;
 `
 
-export default function register() {
+export default function () {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
-  const userRedux = useSelector((s) => s.user)
   const router = useRouter()
-  const { isFetching, error } = useSelector((s) => s.user)
+  const { isFetching, error, currentUser } = useSelector((s) => s.user)
   const dispatch = useDispatch()
 
-  const handleLogin = (e) => {
-    e.preventDefault(dispatch)
+  const handleLogin = async (e) => {
+    e.preventDefault()
     console.log(username, password)
-    login(dispatch, { username, password })
+    dispatch(login({ username, password }))
   }
-  if (userRedux.currentUser) router.push("/")
+
+  if (currentUser) router.push("/")
 
   return (
     <Container>
       <Wrapper>
         <Title>登录账号</Title>
-        <Form>
+        <Form autoComplete="off">
           <Input
+            className="username"
             onChange={(e) => {
               setUsername(e.target.value)
             }}
             placeholder="输入邮箱或用户名"
           />
           <Input
+            className="password"
             onChange={(e) => {
               setPassword(e.target.value)
             }}

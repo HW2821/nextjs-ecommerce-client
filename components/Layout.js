@@ -1,10 +1,17 @@
 import Head from "next/head"
-import React from "react"
+import React, { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { fetchCartItems } from "../redux/cartSlice"
 import Annoucement from "./Annoucement"
 import Footer from "./Footer"
 import Navbar from "./Navbar"
 
 export default function Layout({ children }) {
+  const currentUser = useSelector((s) => s.user.currentUser)
+  const dispatch = useDispatch()
+  useEffect(() => {
+    if (currentUser) dispatch(fetchCartItems())
+  }, [currentUser])
   return (
     <>
       <Head>
