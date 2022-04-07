@@ -1,8 +1,9 @@
 import Add from "@mui/icons-material/Add"
 import Remove from "@mui/icons-material/Remove"
+import { CircularProgress } from "@mui/material"
 import Image from "next/image"
 import { useRouter } from "next/router"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import styled from "styled-components"
 import { Amount } from "../components/Misc"
@@ -140,6 +141,7 @@ const ProductPrice = styled.div`
   font-size: 30px;
   font-weight: 200;
   margin-top: 10px;
+  position: relative;
 `
 
 const Hr = styled.hr`
@@ -212,15 +214,22 @@ const Num = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-
   border-radius: 20%;
 `
 
+const Loading = styled.div`
+  position: absolute;
+  left: -50%;
+  top: -10%;
+`
+
 export default function () {
+  const [targetProduct, setTargetProduct] = useState()
   const cartRedux = useSelector((s) => s.cart)
   const userRedux = useSelector((s) => s.user)
   const deliverCost = cartRedux.totalPrice ? 5 : 0
   const discount = cartRedux.totalPrice > 50 ? 5 : 0
+  const loading = useSelector((s) => s.cart.loading)
   const router = useRouter()
   const dispatch = useDispatch()
 
@@ -293,11 +302,28 @@ export default function () {
                   </ProductDetail>
                   <PriceDetail>
                     <Quantity>
-                      <Remove sx={{ cursor: "pointer" }} onClick={() => handleRemove(i)} />
+                      <Remove
+                        sx={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setTargetProduct(i)
+                          handleRemove(i)
+                        }}
+                      />
                       <Num> {p.amount}</Num>
-                      <Add sx={{ cursor: "pointer" }} onClick={() => handleAdd(i)} />
+                      <Add
+                        sx={{ cursor: "pointer" }}
+                        onClick={() => {
+                          setTargetProduct(i)
+                          handleAdd(i)
+                        }}
+                      />
                     </Quantity>
-                    <ProductPrice>¥{p.price * p.amount}</ProductPrice>
+                    <ProductPrice>
+                      ¥{p.price * p.amount}
+                      <Loading hidden={!(loading && targetProduct === i)}>
+                        <CircularProgress size={20} />
+                      </Loading>
+                    </ProductPrice>
                   </PriceDetail>
                 </Product>
               </div>

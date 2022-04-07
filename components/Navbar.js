@@ -37,9 +37,7 @@ const Left = styled.div`
 `
 
 const Language = styled.span`
-  font-size: 18px;
-  cursor: pointer;
-  ${mobile({ display: "none" })}
+  color: white;
 `
 
 const SearchInput = styled.input`
