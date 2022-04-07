@@ -1,3 +1,4 @@
+import CircularProgress from "@mui/material/CircularProgress"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react"
@@ -5,7 +6,6 @@ import { useDispatch, useSelector } from "react-redux"
 import styled from "styled-components"
 import { fetchCartItems } from "../redux/cartSlice"
 import { login } from "../redux/userSlice"
-// import { login } from "../redux/apiCalls"
 import { mobile } from "../styled/responsive"
 
 const Container = styled.div`
@@ -53,6 +53,7 @@ const Input = styled.input`
 `
 
 const Button = styled.button`
+  position: relative;
   all: unset;
   text-align: center;
   background-color: teal;
@@ -72,12 +73,22 @@ const Button = styled.button`
 const Error = styled.span`
   color: red;
 `
+const Loading = styled.div`
+  position: absolute;
+  display: inline-block;
+  margin-left: 20px;
+  ${(p) =>
+    p.hidden && {
+      display: "none",
+    }}
+`
 
 export default function () {
   const [username, setUsername] = useState("")
   const [password, setPassword] = useState("")
   const router = useRouter()
-  const { isFetching, error, currentUser } = useSelector((s) => s.user)
+  const { error, currentUser } = useSelector((s) => s.user)
+  const isFetching = useSelector((s) => s.user.isFetching)
   const dispatch = useDispatch()
 
   const handleLogin = async (e) => {
@@ -110,6 +121,9 @@ export default function () {
           />
           <Button disabled={isFetching} onClick={handleLogin}>
             登陆
+            <Loading hidden={!isFetching}>
+              <CircularProgress color="inherit" size={20} />
+            </Loading>
           </Button>
           <span>
             无账号？<Link href={"/register"}>点此注册</Link>
