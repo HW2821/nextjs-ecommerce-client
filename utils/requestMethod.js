@@ -1,6 +1,6 @@
 import axios from "axios"
 
-const BASE_URL = "https://express-ecommerce-lse0d7g2j-hw2821.vercel.app"
+const BASE_URL = "https://express-ecommerce-api-hw2821.vercel.app/api"
 // "http://localhost:5000/api"
 // https://hw-site-demo.herokuapp.com/api
 export const publicRequest = axios.create({
