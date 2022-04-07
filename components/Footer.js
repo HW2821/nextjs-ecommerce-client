@@ -91,9 +91,10 @@ export default function Footer() {
   return (
     <Container>
       <Left>
-        <Logo>HW's</Logo>
+        <Logo>HW's demo</Logo>
         <Desc>
-          React 前端 Next.js + Styled Components <br /> Node 后端 Nest.js + RESTful API + MongoDB
+          前端 React(Next.js) + redux + Styled Components <br />
+          后端 express.js + MongoDB
         </Desc>
         <SocialContainer>
           <SocialIcon color="3B5999">

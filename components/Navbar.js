@@ -194,7 +194,7 @@ export default function Navbar() {
           </SearchContainer>
         </Left>
         <Center>
-          <Logo onClick={() => router.push("/")}>HW's</Logo>
+          <Logo onClick={() => router.push("/")}>HW's demo</Logo>
         </Center>
         <Right>
           {currentUser ? userMenu : defaultMenu}
