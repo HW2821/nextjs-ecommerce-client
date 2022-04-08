@@ -10,6 +10,8 @@ import { useDispatch, useSelector } from "react-redux"
 import { loggout } from "../redux/userSlice"
 import { clearCart, resetCart } from "../redux/cartSlice"
 import HomeOutlined from "@mui/icons-material/HomeOutlined"
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined"
+import PersonIcon from "@mui/icons-material/Person"
 
 const Container = styled.div`
   height: 60px;
@@ -75,43 +77,31 @@ const Right = styled.div`
 `
 
 const MenuItem = styled.div`
+  position: relative;
   white-space: nowrap;
   font-size: 14px;
   cursor: pointer;
   margin-right: 25px;
-
+  display: flex;
   &:last-of-type {
-    margin-right: 0;
-    ${mobile({ marginRight: "15px" })}
+    margin-right: 15px;
   }
-`
-
-const DropDown = styled.div`
-  position: relative;
-  margin-right: 20px;
-  height: 25px;
+  ${mobile({ marginRight: "10px" })}
 `
 
 const UserName = styled.div`
   font-size: 20px;
   cursor: pointer;
   padding: 5px 10px;
-  border: 1px solid black;
-
+  background-color: white;
   &:hover {
     background-color: #e4e4e4;
   }
 `
 
 const LogOut = styled.div`
-  position: absolute;
-  display: none;
-  display: ${(p) => p.clicked && "block"};
   background-color: white;
-  text-align: center;
   padding: 5px 10px;
-  border: 1px solid black;
-
   white-space: nowrap;
   cursor: pointer;
   &:hover {
@@ -122,6 +112,34 @@ const LogOut = styled.div`
 const HomeIcon = styled.div`
   margin-left: 10px;
   cursor: pointer;
+`
+
+const PersonIconContainer = styled.div`
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:hover {
+    background-color: #ededed;
+  }
+`
+
+const DropDown = styled.div`
+  position: relative;
+  height: 25px;
+`
+
+const DropItem = styled.div`
+  border: 1px solid lightgray;
+  display: none;
+  position: absolute;
+  right: 0;
+  text-align: right;
+  display: ${(p) => p.clicked && "block"};
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 `
 
 export default function Navbar() {
@@ -138,11 +156,18 @@ export default function Navbar() {
     }
   }, [])
 
-  if (client) {
-    window.onclick = (e) => {
-      if (!e.target.matches(".username") && clicked) setClicked(false)
-    }
-  }
+  // if (client) {
+  //   window.onclick = (e) => {
+  //     if (e.target.matches(".usericon")) return
+  //     // if (clicked) setClicked(false)
+  //     const dropdown = document.querySelector(".dropdown")
+
+  //     if (dropdown && clicked) {
+  //       setClicked(false)
+  //       console.log("hi")
+  //     }
+  //   }
+  // }
 
   const handleLogOut = () => {
     dispatch(loggout())
@@ -150,20 +175,26 @@ export default function Navbar() {
   }
 
   const userMenu = (
-    <DropDown>
-      <UserName
-        className="username"
-        onClick={() => {
-          setClicked(!clicked)
-        }}
-      >
-        {currentUser?.username}
-      </UserName>
-      <LogOut onClick={handleLogOut} clicked={clicked}>
-        退出
-      </LogOut>
-    </DropDown>
+    <MenuItem>
+      <DropDown className="dropdown">
+        <PersonIconContainer
+          className="usericon"
+          onClick={() => {
+            setClicked(!clicked)
+            console.log("hi")
+          }}
+        >
+          {clicked ? <PersonIcon /> : <PersonOutlineOutlinedIcon />}
+        </PersonIconContainer>
+
+        <DropItem clicked={clicked}>
+          <UserName>{currentUser?.username}</UserName>
+          <LogOut onClick={handleLogOut}>退出</LogOut>
+        </DropItem>
+      </DropDown>
+    </MenuItem>
   )
+
   const defaultMenu = (
     <>
       <MenuItem>
