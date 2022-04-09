@@ -1,4 +1,4 @@
-import { Checkbox } from "@mui/material"
+import { Checkbox, CircularProgress } from "@mui/material"
 import Link from "next/link"
 import { useRouter } from "next/router"
 import { useState } from "react"
@@ -67,6 +67,11 @@ const Button = styled.button`
   font-weight: 700;
   cursor: pointer;
   margin-bottom: 10px;
+
+  &:disabled {
+    background-color: grey;
+    cursor: not-allowed;
+  }
 `
 
 const Warn = styled.span`
@@ -81,6 +86,7 @@ export default function () {
   const [checkbox, setCheckbox] = useState(false)
   const [warning, setWarning] = useState("")
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
 
   const handleClick = async (e) => {
     setWarning("")
@@ -93,13 +99,16 @@ export default function () {
     if (!confirm) return setWarning("未确认密码")
     if (password !== confirm) return setWarning("请输入相同密码")
     if (!checkbox) return setWarning("未确认协议")
+    setLoading(true)
     const data = await register({ username, email, password })
+    setLoading(false)
     if (data._id) {
       alert("注册成功,前往登录")
-      setTimeout(() => {
-        router.push("/login")
-      }, 2000)
+      router.push("/login")
+    } else {
+      alert("注册失败： " + data)
     }
+    setLoading(false)
   }
 
   return (
@@ -107,7 +116,7 @@ export default function () {
       <Wrapper>
         <Title>注册账号</Title>
         {warning ? <Warn>{warning}</Warn> : null}
-        <Form>
+        <Form autoComplete="off">
           <Input
             placeholder="用户名"
             onChange={(e) => {
@@ -134,6 +143,7 @@ export default function () {
           />
           <Aggrement>
             <Checkbox
+              checked={checkbox}
               disableRipple
               color="grey"
               onChange={() => {
@@ -142,7 +152,9 @@ export default function () {
             />
             我已阅读并同意使用《用户协议》
           </Aggrement>
-          <Button onClick={handleClick}>确认</Button>
+          <Button onClick={handleClick} disabled={loading}>
+            确认 <CircularProgress size={20} color="inherit" sx={loading ? {} : { display: "none" }} />
+          </Button>
           <span>
             已有账号？
             <Link href={"/login"}>点此登陆</Link>

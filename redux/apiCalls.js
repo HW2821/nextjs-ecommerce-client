@@ -5,7 +5,7 @@ export const register = async (info) => {
     const res = await publicRequest.post("/auth/register", info)
     return res.data
   } catch (error) {
-    alert(error.response.data)
+    return error.response.data
   }
 }
 
