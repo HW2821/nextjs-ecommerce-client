@@ -8,6 +8,8 @@ import styled from "styled-components"
 import { Amount } from "../../components/Misc"
 import { addToCart } from "../../redux/cartSlice"
 import { mobile } from "../../styled/responsive"
+import { debounce, Trigger } from "../../utils/miscs"
+
 import { publicRequest, userRequest } from "../../utils/requestMethod"
 
 const Container = styled.div``
@@ -157,16 +159,19 @@ export default function Product() {
     }
   }
 
-  const handleAddToCart = () => {
-    dispatch(
-      addToCart({
-        ...product,
-        amount,
-        color,
-        size,
-      })
-    )
-  }
+  const trigger = new Trigger()
+  const handleAddToCart = () =>
+    trigger.throttle(2000, () => {
+      if (loading) return
+      dispatch(
+        addToCart({
+          ...product,
+          amount,
+          color,
+          size,
+        })
+      )
+    })
 
   useEffect(async () => {
     if (!isReady) return

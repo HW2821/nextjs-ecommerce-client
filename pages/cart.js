@@ -9,6 +9,7 @@ import styled from "styled-components"
 import { Amount } from "../components/Misc"
 import { addToCart } from "../redux/cartSlice"
 import { mobile } from "../styled/responsive"
+import { Trigger } from "../utils/miscs"
 import { userRequest } from "../utils/requestMethod"
 
 const Container = styled.div`
@@ -247,15 +248,23 @@ export default function () {
     if (!userRedux.currentUser) router.push("/login")
   }, [userRedux])
 
+  const trigger = new Trigger()
   const handleAdd = (i) => {
-    const newItem = structuredClone(cartRedux.cartItems[i])
-    newItem.amount = 1
-    dispatch(addToCart(newItem))
+    trigger.throttle(1000, () => {
+      if (loading) return
+      console.log("ds")
+      const newItem = structuredClone(cartRedux.cartItems[i])
+      newItem.amount = 1
+      dispatch(addToCart(newItem))
+    })
   }
   const handleRemove = (i) => {
-    const newItem = structuredClone(cartRedux.cartItems[i])
-    newItem.amount = -1
-    dispatch(addToCart(newItem))
+    trigger.throttle(1000, () => {
+      if (loading) return
+      const newItem = structuredClone(cartRedux.cartItems[i])
+      newItem.amount = -1
+      dispatch(addToCart(newItem))
+    })
   }
 
   if (!userRedux.currentUser) return <Blank />

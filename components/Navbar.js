@@ -8,7 +8,7 @@ import { useRouter } from "next/router"
 import Link from "next/link"
 import { useDispatch, useSelector } from "react-redux"
 import { loggout } from "../redux/userSlice"
-import { clearCart, resetCart } from "../redux/cartSlice"
+import { clearCart } from "../redux/cartSlice"
 import HomeOutlined from "@mui/icons-material/HomeOutlined"
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined"
 import PersonIcon from "@mui/icons-material/Person"
@@ -156,18 +156,9 @@ export default function Navbar() {
     }
   }, [])
 
-  // if (client) {
-  //   window.onclick = (e) => {
-  //     if (e.target.matches(".usericon")) return
-  //     // if (clicked) setClicked(false)
-  //     const dropdown = document.querySelector(".dropdown")
-
-  //     if (dropdown && clicked) {
-  //       setClicked(false)
-  //       console.log("hi")
-  //     }
-  //   }
-  // }
+  useEffect(() => {
+    setClicked(false)
+  }, [currentUser])
 
   const handleLogOut = () => {
     dispatch(loggout())
@@ -181,7 +172,6 @@ export default function Navbar() {
           className="usericon"
           onClick={() => {
             setClicked(!clicked)
-            console.log("hi")
           }}
         >
           {clicked ? <PersonIcon /> : <PersonOutlineOutlinedIcon />}
