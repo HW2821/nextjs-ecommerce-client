@@ -1,3 +1,5 @@
+import CircularProgress from "@mui/material/CircularProgress"
+import { textAlign } from "@mui/system"
 import { useEffect, useState } from "react"
 import styled from "styled-components"
 import { publicRequest } from "../utils/requestMethod"
@@ -12,15 +14,18 @@ const Container = styled.div`
 export default function Products({ category, filter, sort = "new" }) {
   const [list, setList] = useState([])
   const [filteredList, setFilteredList] = useState([])
+  const [loading, setLoading] = useState(false)
 
   const getProductlist = async () => {
     let data
     try {
+      setLoading(true)
       const res = await publicRequest.get("/products", { params: { category, sort } })
       data = res.data
     } catch (error) {
       console.log(error)
     }
+    setLoading(false)
     return data || []
   }
 
@@ -52,9 +57,7 @@ export default function Products({ category, filter, sort = "new" }) {
 
   return (
     <Container>
-      {filteredList.map((d) => (
-        <ProductItem key={d._id} {...d} />
-      ))}
+      {loading ? <CircularProgress /> : filteredList.map((d) => <ProductItem key={d._id} {...d} />)}
     </Container>
   )
 }

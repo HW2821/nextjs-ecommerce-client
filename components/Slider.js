@@ -5,6 +5,7 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import { slideData } from "../mock/data"
 import { mobile } from "../styled/responsive"
+import { useRouter } from "next/router"
 
 const Container = styled.div`
   width: 100%;
@@ -105,7 +106,7 @@ const Button = styled.button`
 
 export default function Slider() {
   const [index, setIndex] = useState(0)
-
+  const router = useRouter()
   const handleArrow = (dr) => {
     let next
     if (dr === "l") {
@@ -137,7 +138,12 @@ export default function Slider() {
 
       <Wrapper index={index}>
         {slideData.map((d) => (
-          <Slide key={d.id}>
+          <Slide
+            key={d.id}
+            onClick={() => {
+              router.push("/product/62453ca37e40b049594c42d4")
+            }}
+          >
             <Image draggable={false} priority src={d.img} layout="fill" objectFit="cover" />
             <InfoContainer>
               <Title>{d.title}</Title>

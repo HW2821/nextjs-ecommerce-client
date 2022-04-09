@@ -83,7 +83,7 @@ export default function Productlist() {
           <Select name="color" defaultValue="all" onChange={handleFilterChange}>
             <Option value="green">绿色</Option>
             <Option value="orange">橘色</Option>
-            <Option value="brown">棕色</Option>
+            <Option value="yellow">黄色</Option>
             <Option value="all">全部颜色</Option>
           </Select>
         </Filter>
